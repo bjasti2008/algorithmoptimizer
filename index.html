@@ -1,0 +1,2360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green Algorithm Optimizer Pro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: linear-gradient(135deg, #0f1419 0%, #1a2332 100%);
+            color: #e8f4f8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(26, 35, 50, 0.8);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            color: #4ade80;
+            border-bottom-color: #4ade80;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4ade80;
+            font-size: 1.1em;
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            border-radius: 8px;
+            background: rgba(15, 20, 25, 0.8);
+            color: #e8f4f8;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, textarea:focus {
+            outline: none;
+            border-color: #4ade80;
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+        }
+
+        .code-editor {
+            position: relative;
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            border-radius: 8px;
+            background: rgba(15, 20, 25, 0.8);
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .line-numbers {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 50px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #6b7280;
+            font-size: 12px;
+            padding: 12px 8px;
+            line-height: 1.5;
+            user-select: none;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code-textarea {
+            padding-left: 60px;
+            background: transparent;
+            border: none;
+            width: 100%;
+            height: 300px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            color: #e8f4f8;
+            line-height: 1.5;
+            resize: none;
+        }
+
+        .code-textarea:focus {
+            outline: none;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 0.9em;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        .char-counter.warning {
+            color: #f59e0b;
+        }
+
+        .char-counter.error {
+            color: #ef4444;
+        }
+
+        .analyze-btn {
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            color: #0f1419;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 222, 128, 0.4);
+        }
+
+        .analyze-btn:disabled {
+            background: #374151;
+            color: #6b7280;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .metric-card {
+            background: rgba(15, 20, 25, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4ade80;
+        }
+
+        .metric-title {
+            font-size: 1.3em;
+            color: #4ade80;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .metric-description {
+            color: #94a3b8;
+            font-size: 0.9em;
+        }
+
+        .code-comparison {
+            background: rgba(15, 20, 25, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-header {
+            font-size: 1.5em;
+            color: #4ade80;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .code-panels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .code-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-panel-header {
+            padding: 12px 16px;
+            font-weight: 600;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .original-header {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border-bottom: 2px solid #ef4444;
+        }
+
+        .optimized-header {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border-bottom: 2px solid #22c55e;
+        }
+
+        .code-content {
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .performance-comparison {
+            background: rgba(15, 20, 25, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .performance-metric {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .performance-metric-title {
+            color: #94a3b8;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .performance-values {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .original-value {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .optimized-value {
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        .improvement-badge {
+            background: linear-gradient(45deg, #22c55e, #16a34a);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .degradation-badge {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .copy-btn {
+            background: linear-gradient(45deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .optimization-explanation {
+            background: rgba(15, 20, 25, 0.8);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 3px solid #4ade80;
+        }
+
+        .optimization-title {
+            color: #4ade80;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .optimization-description {
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #4ade80;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #4ade80;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .suggestions-section {
+            margin-top: 30px;
+        }
+
+        .suggestion-item {
+            background: rgba(15, 20, 25, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .suggestion-title {
+            color: #f59e0b;
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .suggestion-description {
+            color: #94a3b8;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .code-example {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            color: #e8f4f8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .highlight {
+            background: rgba(74, 222, 128, 0.2);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .visualization-section {
+            margin: 30px 0;
+            background: rgba(15, 20, 25, 0.6);
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 4px solid #4ade80;
+        }
+
+        .visualization-title {
+            font-size: 1.5em;
+            color: #4ade80;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .chart-title {
+            color: #e8f4f8;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .chart-canvas {
+            max-height: 300px;
+        }
+
+        .overall-comparison {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .radar-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .improvement-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .improvement-metric {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+        }
+
+        .improvement-metric-title {
+            color: #94a3b8;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .improvement-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #4ade80;
+        }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        .original-color {
+            background: #ef4444;
+        }
+
+        .optimized-color {
+            background: #22c55e;
+        }
+
+        .energy-color {
+            background: #f59e0b;
+        }
+
+        .carbon-color {
+            background: #8b5cf6;
+        }
+
+        .advanced-insights-section {
+            margin-top: 30px;
+            background: rgba(15, 20, 25, 0.6);
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 4px solid #8b5cf6; /* A new color for advanced insights */
+        }
+
+        .advanced-insights-title {
+            font-size: 1.5em;
+            color: #8b5cf6;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .insight-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 3px solid #6366f1;
+        }
+
+        .insight-title {
+            color: #6366f1;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .insight-description {
+            color: #94a3b8;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .highlight-complexity {
+            background-color: rgba(255, 165, 0, 0.2); /* Orange highlight for complexity */
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+
+        /* Syntax Highlighting (basic simulation) */
+        .keyword { color: #569cd6; } /* Blue */
+        .string { color: #ce9178; } /* Orange */
+        .comment { color: #6a9955; } /* Green */
+        .number { color: #b5cea8; } /* Light green */
+        .operator { color: #d4d4d4; } /* White */
+        .function-call { color: #dcdcaa; } /* Yellow */
+        .variable { color: #9cdcfe; } /* Light blue */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 Green Algorithm Optimizer Pro</h1>
+        <p class="subtitle">Advanced code analysis with AI-powered optimization and energy efficiency comparison</p>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="analyze">Code Analysis</button>
+            <button class="tab" data-tab="optimize">Code Optimization</button>
+            <button class="tab" data-tab="compare">Performance Comparison</button>
+        </div>
+
+        <div class="tab-content active" id="analyze">
+            <div class="input-section">
+                <label for="language">Programming Language:</label>
+                <select id="language">
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="java">Java</option>
+                    <option value="cpp">C++</option>
+                    <option value="c">C</option>
+                    <option value="go">Go</option>
+                    <option value="rust">Rust</option>
+                </select>
+            </div>
+
+            <div class="input-section">
+                <label for="code">Your Code (Max 250 lines):</label>
+                <div class="code-editor">
+                    <div class="line-numbers" id="lineNumbers">1</div>
+                    <textarea class="code-textarea" id="code" placeholder="Paste your code here..."></textarea>
+                </div>
+                <div class="char-counter" id="charCounter">0 / 12500 characters</div>
+            </div>
+
+            <button class="analyze-btn" id="analyzeBtn">Analyze & Optimize Code</button>
+        </div>
+
+        <div class="tab-content" id="optimize">
+            <div class="code-comparison">
+                <div class="comparison-header">🔄 Code Optimization Results</div>
+                <div class="code-panels">
+                    <div class="code-panel">
+                        <div class="code-panel-header original-header">📝 Original Code</div>
+                        <div class="code-content" id="originalCode">No code analyzed yet...</div>
+                        <button class="copy-btn" onclick="copyToClipboard('originalCode')">Copy Original</button>
+                    </div>
+                    <div class="code-panel">
+                        <div class="code-panel-header optimized-header">⚡ Optimized Code</div>
+                        <div class="code-content" id="optimizedCode">Run analysis first...</div>
+                        <button class="copy-btn" onclick="copyToClipboard('optimizedCode')">Copy Optimized</button>
+                    </div>
+                </div>
+                <div id="optimizationExplanations"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="compare">
+            <div class="performance-comparison">
+                <div class="comparison-header">📊 Performance Metrics Comparison</div>
+                <div class="performance-grid">
+                    <div class="performance-metric">
+                        <div class="performance-metric-title">Execution Time</div>
+                        <div class="performance-values">
+                            <span class="original-value" id="originalTime">--</span>
+                            <span>→</span>
+                            <span class="optimized-value" id="optimizedTime">--</span>
+                        </div>
+                        <div id="timeImprovement" class="improvement-badge">-- improvement</div>
+                    </div>
+                    <div class="performance-metric">
+                        <div class="performance-metric-title">Memory Usage</div>
+                        <div class="performance-values">
+                            <span class="original-value" id="originalMemory">--</span>
+                            <span>→</span>
+                            <span class="optimized-value" id="optimizedMemory">--</span>
+                        </div>
+                        <div id="memoryImprovement" class="improvement-badge">-- improvement</div>
+                    </div>
+                    <div class="performance-metric">
+                        <div class="performance-metric-title">Energy Consumption</div>
+                        <div class="performance-values">
+                            <span class="original-value" id="originalEnergy">--</span>
+                            <span>→</span>
+                            <span class="optimized-value" id="optimizedEnergy">--</span>
+                        </div>
+                        <div id="energyImprovement" class="improvement-badge">-- improvement</div>
+                    </div>
+                    <div class="performance-metric">
+                        <div class="performance-metric-title">Carbon Footprint</div>
+                        <div class="performance-values">
+                            <span class="original-value" id="originalCarbon">--</span>
+                            <span>→</span>
+                            <span class="optimized-value" id="optimizedCarbon">--</span>
+                        </div>
+                        <div id="carbonImprovement" class="improvement-badge">-- improvement</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="grid">
+                <div class="metric-card">
+                    <div class="metric-title">Original Efficiency Score</div>
+                    <div class="metric-value" style="background: linear-gradient(45deg, #ef4444, #dc2626); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" id="originalEfficiencyScore">--</div>
+                    <div class="metric-description">Current algorithm efficiency rating</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-title">Optimized Efficiency Score</div>
+                    <div class="metric-value" style="background: linear-gradient(45deg, #4ade80, #22c55e); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" id="optimizedEfficiencyScore">--</div>
+                    <div class="metric-description">Enhanced algorithm efficiency rating</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-title">Overall Improvement</div>
+                    <div class="metric-value" style="background: linear-gradient(45deg, #f59e0b, #d97706); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" id="overallImprovement">--</div>
+                    <div class="metric-description">Combined performance enhancement</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-title">Optimization Quality</div>
+                    <div class="metric-value" id="optimizationQuality">--</div>
+                    <div class="metric-description">Code transformation effectiveness</div>
+                </div>
+            </div>
+
+                    <div class="visualization-section">
+        <div class="visualization-title">📊 Performance Visualizations</div>
+        
+        <div class="charts-grid">
+            <!-- Performance Metrics Bar Chart -->
+            <div class="chart-container">
+                <div class="chart-title">Performance Metrics Comparison</div>
+                <canvas id="performanceChart" class="chart-canvas"></canvas>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-color original-color"></div>
+                        <span>Original Code</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color optimized-color"></div>
+                        <span>Optimized Code</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Efficiency Score Doughnut Chart -->
+            <div class="chart-container">
+                <div class="chart-title">Efficiency Score Comparison</div>
+                <canvas id="efficiencyChart" class="chart-canvas"></canvas>
+            </div>
+
+            <!-- Environmental Impact Chart -->
+            <div class="chart-container">
+                <div class="chart-title">Environmental Impact</div>
+                <canvas id="environmentalChart" class="chart-canvas"></canvas>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-color energy-color"></div>
+                        <span>Energy Consumption</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color carbon-color"></div>
+                        <span>Carbon Footprint</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Improvement Timeline -->
+            <div class="chart-container">
+                <div class="chart-title">Optimization Timeline</div>
+                <canvas id="timelineChart" class="chart-canvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Overall Comparison Radar Chart -->
+        <div class="overall-comparison">
+            <div class="chart-title">Overall Performance Radar</div>
+            <div class="radar-container">
+                <canvas id="radarChart" class="chart-canvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Improvement Summary -->
+        <div class="improvement-summary">
+            <div class="improvement-metric">
+                <div class="improvement-metric-title">Speed Improvement</div>
+                <div class="improvement-value" id="speedImprovement">--</div>
+            </div>
+            <div class="improvement-metric">
+                <div class="improvement-metric-title">Memory Reduction</div>
+                <div class="improvement-value" id="memoryReduction">--</div>
+            </div>
+            <div class="improvement-metric">
+                <div class="improvement-metric-title">Energy Savings</div>
+                <div class="improvement-value" id="energySavings">--</div>
+            </div>
+            <div class="improvement-metric">
+                <div class="improvement-metric-title">CO2 Reduction</div>
+                <div class="improvement-value" id="carbonReduction">--</div>
+            </div>
+        </div>
+    </div>
+            <div class="advanced-insights-section">
+                <h3 class="advanced-insights-title">🔬 Advanced Analysis Insights</h3>
+                <div id="advancedInsights">
+                    <!-- Advanced insights will be populated here -->
+                </div>
+            </div>
+            <div class="suggestions-section">
+                <h3 style="color: #4ade80; margin-bottom: 20px; font-size: 1.5em;">💡 Additional Optimization Suggestions</h3>
+                <div id="suggestions"></div>
+            </div>
+        </div>
+
+        <div class="loading" id="loading" style="display: none;">
+            Analyzing and optimizing your code...
+        </div>
+    </div>
+
+    <script>
+      
+      // Add these methods to your GreenAlgorithmOptimizerPro class
+        class DataVisualizationManager {
+            constructor() {
+                this.charts = {};
+                this.chartColors = {
+                    original: '#ef4444',
+                    optimized: '#22c55e',
+                    energy: '#f59e0b',
+                    carbon: '#8b5cf6',
+                    background: 'rgba(15, 20, 25, 0.8)'
+                };
+            }
+
+            createPerformanceChart(metrics) {
+                const ctx = document.getElementById('performanceChart').getContext('2d');
+                
+                if (this.charts.performance) {
+                    this.charts.performance.destroy();
+                }
+
+                this.charts.performance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Execution Time (ms)', 'Memory Usage (MB)', 'Energy (J)', 'Carbon (kg CO2)'],
+                        datasets: [{
+                            label: 'Original',
+                            data: [
+                                parseFloat(metrics.originalTime),
+                                parseFloat(metrics.originalMemory),
+                                parseFloat(metrics.originalEnergy),
+                                parseFloat(metrics.originalCarbon) * 1000 // Convert to mg for better scale
+                            ],
+                            backgroundColor: this.chartColors.original,
+                            borderColor: this.chartColors.original,
+                            borderWidth: 1
+                        }, {
+                            label: 'Optimized',
+                            data: [
+                                parseFloat(metrics.optimizedTime),
+                                parseFloat(metrics.optimizedMemory),
+                                parseFloat(metrics.optimizedEnergy),
+                                parseFloat(metrics.optimizedCarbon) * 1000
+                            ],
+                            backgroundColor: this.chartColors.optimized,
+                            borderColor: this.chartColors.optimized,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: { // Enable tooltips for interactivity
+                                enabled: true,
+                                mode: 'index',
+                                intersect: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#94a3b8'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#94a3b8',
+                                    maxRotation: 45
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createEfficiencyChart(metrics) {
+                const ctx = document.getElementById('efficiencyChart').getContext('2d');
+                
+                if (this.charts.efficiency) {
+                    this.charts.efficiency.destroy();
+                }
+
+                this.charts.efficiency = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Original Efficiency', 'Optimized Efficiency'],
+                        datasets: [{
+                            data: [metrics.originalEfficiency, Math.round(metrics.optimizedEfficiency)],
+                            backgroundColor: [this.chartColors.original, this.chartColors.optimized],
+                            borderColor: [this.chartColors.original, this.chartColors.optimized],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#e8f4f8',
+                                    padding: 20
+                                }
+                            },
+                            tooltip: { // Enable tooltips for interactivity
+                                enabled: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            createEnvironmentalChart(metrics) {
+                const ctx = document.getElementById('environmentalChart').getContext('2d');
+                
+                if (this.charts.environmental) {
+                    this.charts.environmental.destroy();
+                }
+
+                const energyReduction = ((metrics.originalEnergy - metrics.optimizedEnergy) / metrics.originalEnergy * 100);
+                const carbonReduction = ((metrics.originalCarbon - metrics.optimizedCarbon) / metrics.originalCarbon * 100);
+
+                this.charts.environmental = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Energy Reduction (%)', 'CO2 Reduction (%)'],
+                        datasets: [{
+                            label: 'Environmental Impact Reduction',
+                            data: [energyReduction, carbonReduction],
+                            backgroundColor: [this.chartColors.energy, this.chartColors.carbon],
+                            borderColor: [this.chartColors.energy, this.chartColors.carbon],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: { // Enable tooltips for interactivity
+                                enabled: true
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    color: '#94a3b8',
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#94a3b8'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createTimelineChart(metrics) {
+                const ctx = document.getElementById('timelineChart').getContext('2d');
+                
+                if (this.charts.timeline) {
+                    this.charts.timeline.destroy();
+                }
+
+                this.charts.timeline = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Initial', 'Analysis', 'Optimization', 'Final'],
+                        datasets: [{
+                            label: 'Efficiency Score',
+                            data: [
+                                metrics.originalEfficiency * 0.8,
+                                metrics.originalEfficiency,
+                                metrics.originalEfficiency + (metrics.improvement * 0.6),
+                                Math.round(metrics.optimizedEfficiency)
+                            ],
+                            borderColor: this.chartColors.optimized,
+                            backgroundColor: this.chartColors.optimized + '20',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: { // Enable tooltips for interactivity
+                                enabled: true
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    color: '#94a3b8'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#94a3b8'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createRadarChart(metrics) {
+                const ctx = document.getElementById('radarChart').getContext('2d');
+                
+                if (this.charts.radar) {
+                    this.charts.radar.destroy();
+                }
+
+                const timeScore = Math.max(0, 100 - parseFloat(metrics.originalTime));
+                const memoryScore = Math.max(0, 100 - parseFloat(metrics.originalMemory) * 5);
+                const energyScore = Math.max(0, 100 - parseFloat(metrics.originalEnergy) * 2);
+                
+                const optimizedTimeScore = Math.max(0, 100 - parseFloat(metrics.optimizedTime));
+                const optimizedMemoryScore = Math.max(0, 100 - parseFloat(metrics.optimizedMemory) * 5);
+                const optimizedEnergyScore = Math.max(0, 100 - parseFloat(metrics.optimizedEnergy) * 2);
+
+                this.charts.radar = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Speed', 'Memory Efficiency', 'Energy Efficiency', 'Code Quality', 'Maintainability'],
+                        datasets: [{
+                            label: 'Original',
+                            data: [timeScore, memoryScore, energyScore, metrics.originalEfficiency, metrics.originalEfficiency * 0.9],
+                            borderColor: this.chartColors.original,
+                            backgroundColor: this.chartColors.original + '20',
+                            pointBackgroundColor: this.chartColors.original,
+                            pointBorderColor: this.chartColors.original,
+                            pointHoverBackgroundColor: this.chartColors.original,
+                            pointHoverBorderColor: this.chartColors.original
+                        }, {
+                            label: 'Optimized',
+                            data: [optimizedTimeScore, optimizedMemoryScore, optimizedEnergyScore, Math.round(metrics.optimizedEfficiency), Math.round(metrics.optimizedEfficiency * 0.95)],
+                            borderColor: this.chartColors.optimized,
+                            backgroundColor: this.chartColors.optimized + '20',
+                            pointBackgroundColor: this.chartColors.optimized,
+                            pointBorderColor: this.chartColors.optimized,
+                            pointHoverBackgroundColor: this.chartColors.optimized,
+                            pointHoverBorderColor: this.chartColors.optimized
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#e8f4f8',
+                                    padding: 20
+                                }
+                            },
+                            tooltip: { // Enable tooltips for interactivity
+                                enabled: true
+                            }
+                        },
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    color: '#94a3b8',
+                                    backdropColor: 'rgba(0, 0, 0, 0)'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                pointLabels: {
+                                    color: '#e8f4f8'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            updateImprovementSummary(metrics) {
+                const timeImprovement = ((metrics.originalTime - metrics.optimizedTime) / metrics.originalTime * 100);
+                const memoryImprovement = ((metrics.originalMemory - metrics.optimizedMemory) / metrics.originalMemory * 100);
+                const energyImprovement = ((metrics.originalEnergy - metrics.optimizedEnergy) / metrics.originalEnergy * 100);
+                const carbonImprovement = ((metrics.originalCarbon - metrics.optimizedCarbon) / metrics.originalCarbon * 100);
+
+                document.getElementById('speedImprovement').textContent = `${timeImprovement.toFixed(1)}%`;
+                document.getElementById('memoryReduction').textContent = `${memoryImprovement.toFixed(1)}%`;
+                document.getElementById('energySavings').textContent = `${energyImprovement.toFixed(1)}%`;
+                document.getElementById('carbonReduction').textContent = `${carbonImprovement.toFixed(1)}%`;
+            }
+
+            createAllVisualizations(metrics) {
+                this.createPerformanceChart(metrics);
+                this.createEfficiencyChart(metrics);
+                this.createEnvironmentalChart(metrics);
+                this.createTimelineChart(metrics);
+                this.createRadarChart(metrics);
+                this.updateImprovementSummary(metrics);
+            }
+
+            destroyAllCharts() {
+                Object.values(this.charts).forEach(chart => {
+                    if (chart) chart.destroy();
+                });
+                this.charts = {};
+            }
+        }
+        class GreenAlgorithmOptimizerPro {
+            constructor() {
+                this.codeInput = document.getElementById('code');
+                this.languageSelect = document.getElementById('language');
+                this.analyzeBtn = document.getElementById('analyzeBtn');
+                this.results = document.getElementById('results');
+                this.loading = document.getElementById('loading');
+                this.charCounter = document.getElementById('charCounter');
+                this.lineNumbers = document.getElementById('lineNumbers');
+                this.advancedInsightsContainer = document.getElementById('advancedInsights');
+                this.vizManager = new DataVisualizationManager();
+
+                this.originalCode = '';
+                this.optimizedCode = '';
+                this.analysisResults = null;
+                this.complexLines = []; // New property to store complex line numbers
+                
+                this.initEventListeners();
+            }
+
+            initEventListeners() {
+                this.analyzeBtn.addEventListener('click', () => this.analyzeAndOptimize());
+                this.codeInput.addEventListener('input', () => {
+                    this.updateCharCounter();
+                    this.updateLineNumbers();
+                });
+                this.codeInput.addEventListener('paste', () => {
+                    setTimeout(() => {
+                        this.updateCharCounter();
+                        this.updateLineNumbers();
+                    }, 10);
+                });
+                this.codeInput.addEventListener('scroll', () => this.syncLineNumbers());
+
+                // Tab switching
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
+                });
+            }
+
+            updateLineNumbers() {
+                const lines = this.codeInput.value.split('\n').length;
+                const lineNumbersText = Array.from({length: lines}, (_, i) => i + 1).join('\n');
+                this.lineNumbers.textContent = lineNumbersText;
+            }
+
+            syncLineNumbers() {
+                this.lineNumbers.scrollTop = this.codeInput.scrollTop;
+            }
+
+            switchTab(tabName) {
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabName).classList.add('active');
+            }
+
+            updateCharCounter() {
+                const length = this.codeInput.value.length;
+                const maxLength = 12500;
+                const lines = this.codeInput.value.split('\n').length;
+                
+                this.charCounter.textContent = `${length} / ${maxLength} characters (${lines} lines)`;
+                
+                if (length > maxLength * 0.9) {
+                    this.charCounter.className = 'char-counter error';
+                } else if (length > maxLength * 0.7) {
+                    this.charCounter.className = 'char-counter warning';
+                } else {
+                    this.charCounter.className = 'char-counter';
+                }
+
+                this.analyzeBtn.disabled = length > maxLength || length === 0;
+            }
+
+            async analyzeAndOptimize() {
+                const code = this.codeInput.value.trim();
+                const language = this.languageSelect.value;
+
+                if (!code) {
+                    // Replaced alert with a custom message display for better UX
+                    this.showError('Please enter some code to analyze!');
+                    return;
+                }
+
+                this.showLoading();
+                this.originalCode = code;
+                
+                try {
+                    // Simulate analysis time
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    // Perform analysis
+                    this.analysisResults = this.performAnalysis(code, language);
+                    this.complexLines = this.analysisResults.complexity.complexLineNumbers; // Store complex lines
+                    
+                    // Generate optimized code
+                    this.optimizedCode = this.generateOptimizedCode(code, language);
+                    
+                    // Calculate comparison metrics
+                    this.calculateComparisonMetrics();
+                    
+                    // Display results
+                    this.displayResults();
+                    this.displayCodeComparison();
+                    this.displayPerformanceComparison();
+                    this.displayAdvancedInsights(); // Display new insights
+                    
+                } catch (error) {
+                    this.showError('Error analyzing code: ' + error.message);
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            performAnalysis(code, language) {
+                const lines = code.split('\n');
+                const complexity = this.analyzeComplexity(code, language);
+                const patterns = this.analyzePatterns(code, language, lines); // Pass lines for linter checks
+                const concurrency = this.analyzeConcurrency(code, language);
+
+                // Basic syntax error detection (simulated)
+                const syntaxErrors = this.checkSyntax(code, language);
+                if (syntaxErrors.length > 0) {
+                    patterns.linterFindings.push({
+                        type: 'Syntax Error',
+                        description: `Potential syntax issues detected: ${syntaxErrors.join(', ')}. Please review your code.`,
+                        severity: 'error'
+                    });
+                }
+
+
+                // Calculate original efficiency score
+                let originalEfficiency = 100;
+                originalEfficiency -= complexity.timeComplexityPenalty;
+                originalEfficiency -= complexity.spaceComplexityPenalty;
+                originalEfficiency -= patterns.inefficiencyPenalty;
+                originalEfficiency -= concurrency.concurrencyPenalty;
+                
+                // Penalize for linter findings
+                patterns.linterFindings.forEach(finding => {
+                    if (finding.severity === 'warning') originalEfficiency -= 2;
+                    if (finding.severity === 'error') originalEfficiency -= 5;
+                });
+
+                originalEfficiency = Math.max(20, Math.min(100, originalEfficiency));
+
+                // Calculate original energy consumption based on simulated hardware metrics
+                const originalEnergyConsumption = 
+                    (complexity.simulatedCpuCycles * 0.001) +
+                    (complexity.simulatedMemoryAccesses * 0.0005) +
+                    (patterns.simulatedIoOperations * 0.05);
+
+                return {
+                    originalEfficiency: Math.round(originalEfficiency),
+                    originalEnergyConsumption: originalEnergyConsumption.toFixed(2),
+                    complexity: complexity,
+                    patterns: patterns,
+                    concurrency: concurrency,
+                    suggestions: this.generateSuggestions(code, language, patterns, complexity, concurrency),
+                    optimizations: this.identifyOptimizations(code, language)
+                };
+            }
+
+            checkSyntax(code, language) {
+                const errors = [];
+                // Basic checks, not a full parser
+                if (language === 'javascript') {
+                    if ((code.match(/{/g) || []).length !== (code.match(/}/g) || []).length) {
+                        errors.push('Unmatched curly braces');
+                    }
+                    if ((code.match(/\(/g) || []).length !== (code.match(/\)/g) || []).length) {
+                        errors.push('Unmatched parentheses');
+                    }
+                    if (code.includes('function') && !code.includes('{') && !code.includes('=>')) {
+                        errors.push('Function declaration without body');
+                    }
+                } else if (language === 'python') {
+                     if ((code.match(/:/g) || []).length === 0 && code.includes('def ')) {
+                        errors.push('Missing colon after function definition');
+                    }
+                    if ((code.match(/\(/g) || []).length !== (code.match(/\)/g) || []).length) {
+                        errors.push('Unmatched parentheses');
+                    }
+                }
+                // Add more basic syntax checks for other languages as needed
+                return errors;
+            }
+
+            generateOptimizedCode(code, language) {
+                let optimizedCode = code;
+                const optimizations = [];
+
+                // JavaScript-specific optimizations
+                if (language === 'javascript') {
+                    // 1. Cache array lengths in loops
+                    const loopPattern = /for\s*\(\s*(?:var|let|const)?\s*(\w+)\s*=\s*0\s*;\s*\1\s*<\s*([^;]+)\.length\s*;\s*\1\+\+\s*\)/g;
+                    optimizedCode = optimizedCode.replace(loopPattern, (match, iterator, arrayName) => {
+                        optimizations.push({
+                            type: 'Loop Optimization',
+                            description: 'Cached array length to avoid repeated property access'
+                        });
+                        return `for (let ${iterator} = 0, len = ${arrayName}.length; ${iterator} < len; ${iterator}++)`;
+                    });
+
+                    // 2. Use const/let instead of var
+                    optimizedCode = optimizedCode.replace(/\bvar\s+/g, 'const ');
+                    if (optimizedCode !== code) {
+                        optimizations.push({
+                            type: 'Variable Declaration',
+                            description: 'Replaced var with const/let for better scoping and performance'
+                        });
+                    }
+
+                    // 3. Optimize DOM queries
+                    const domQueryPattern = /(document\.(?:getElementById|querySelector(?:All)?)\([^)]+\))/g;
+                    const domQueries = [...optimizedCode.matchAll(domQueryPattern)];
+                    if (domQueries.length > 1) {
+                        const queryMap = new Map();
+                        domQueries.forEach(match => {
+                            const query = match[0];
+                            if (queryMap.has(query)) {
+                                queryMap.set(query, queryMap.get(query) + 1);
+                            } else {
+                                queryMap.set(query, 1);
+                            }
+                        });
+
+                        let cacheDeclarations = '';
+                        for (const [query, count] of queryMap) {
+                            if (count > 1) {
+                                const variableName = `cached_${Math.random().toString(36).substr(2, 9)}`;
+                                cacheDeclarations += `const ${variableName} = ${query};\n`;
+                                optimizedCode = optimizedCode.replace(new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), variableName);
+                            }
+                        }
+
+                        if (cacheDeclarations) {
+                            optimizedCode = cacheDeclarations + optimizedCode;
+                            optimizations.push({
+                                type: 'DOM Query Optimization',
+                                description: 'Cached repeated DOM queries to reduce property access'
+                            });
+                        }
+                    }
+
+                    // 4. Optimize string concatenation in loops
+                    const stringConcatPattern = /for\s*\([^)]+\)\s*{[^}]*(\w+)\s*\+=\s*[^}]*}/g;
+                    if (stringConcatPattern.test(optimizedCode)) {
+                        optimizations.push({
+                            type: 'String Concatenation',
+                            description: 'Consider using Array.join() for string building in loops'
+                        });
+                    }
+                }
+
+                // Python-specific optimizations
+                if (language === 'python') {
+                    // 1. List comprehensions instead of loops
+                    const loopPattern = /(\w+)\s*=\s*\[\]\s*\n\s*for\s+(\w+)\s+in\s+([^:]+):\s*\n\s*\1\.append\(([^)]+)\)/g;
+                    optimizedCode = optimizedCode.replace(loopPattern, (match, listName, iterator, iterable, expression) => {
+                        optimizations.push({
+                            type: 'List Comprehension',
+                            description: 'Replaced loop with list comprehension for better performance'
+                        });
+                        return `${listName} = [${expression} for ${iterator} in ${iterable}]`;
+                    });
+
+                    // 2. Use join() for string concatenation
+                    const stringConcatPattern = /(\w+)\s*=\s*['""]['""]?\s*\n\s*for\s+\w+\s+in\s+[^:]+:\s*\n\s*\1\s*\+=\s*[^}]+/g;
+                    if (stringConcatPattern.test(optimizedCode)) {
+                        optimizations.push({
+                            type: 'String Optimization',
+                            description: 'Use str.join() instead of string concatenation in loops'
+                        });
+                    }
+
+                    // 3. Use sets for membership testing
+                    const inListPattern = /if\s+(\w+)\s+in\s+\[([^\]]+)\]/g;
+                    optimizedCode = optimizedCode.replace(inListPattern, (match, variable, elements) => {
+                        optimizations.push({
+                            type: 'Set Optimization',
+                            description: 'Used set for O(1) membership testing instead of list'
+                        });
+                        return `if ${variable} in {${elements}}`;
+                    });
+                }
+
+                // Java-specific optimizations
+                if (language === 'java') {
+                    // 1. StringBuilder for string concatenation
+                    const stringConcatPattern = /String\s+(\w+)\s*=\s*['""]['""]?\s*;\s*\n[^}]*\1\s*\+=\s*[^}]*/g;
+                    if (stringConcatPattern.test(optimizedCode)) {
+                        optimizations.push({
+                            type: 'StringBuilder Optimization',
+                            description: 'Use StringBuilder for efficient string concatenation'
+                        });
+                    }
+
+                    // 2. Enhanced for loops
+                    const forLoopPattern = /for\s*\(\s*int\s+(\w+)\s*=\s*0\s*;\s*\1\s*<\s*(\w+)\.length\s*;\s*\1\+\+\s*\)/g;
+                    optimizedCode = optimizedCode.replace(forLoopPattern, (match, iterator, arrayName) => {
+                        optimizations.push({
+                            type: 'Enhanced For Loop',
+                            description: 'Used enhanced for loop for better readability and performance'
+                        });
+                        return `for (int element : ${arrayName})`;
+                    });
+                }
+
+                // C++-specific optimizations
+                if (language === 'cpp') {
+                    // 1. Reserve vector capacity
+                    const vectorPattern = /std::vector<[^>]+>\s+(\w+);/g;
+                    optimizedCode = optimizedCode.replace(vectorPattern, (match, vectorName) => {
+                        optimizations.push({
+                            type: 'Vector Reserve',
+                            description: 'Added vector capacity reservation to avoid reallocations'
+                        });
+                        return `${match}\n${vectorName}.reserve(expected_size);`;
+                    });
+
+                    // 2. Use const references in range-based for loops
+                    const rangeForPattern = /for\s*\(\s*auto\s+(\w+)\s*:\s*([^)]+)\)/g;
+                    optimizedCode = optimizedCode.replace(rangeForPattern, (match, variable, container) => {
+                        optimizations.push({
+                            type: 'Reference Optimization',
+                            description: 'Used const reference to avoid unnecessary copies'
+                        });
+                        return `for (const auto& ${variable} : ${container})`;
+                    });
+                }
+
+                this.optimizationDetails = optimizations;
+                
+                return optimizedCode;
+            }
+
+            analyzeComplexity(code, language) {
+                let timeComplexityPenalty = 0;
+                let spaceComplexityPenalty = 0;
+                let simulatedCpuCycles = 0;
+                let simulatedMemoryAccesses = 0;
+                let rating = 'Good';
+                const complexLineNumbers = [];
+                const lines = code.split('\n');
+
+                // Nested loops detection
+                lines.forEach((line, index) => {
+                    const lineNum = index + 1;
+                    const nestedLoopPattern = /(for\s*\([^}]*{[^}]*for\s*\([^}]*{|while\s*\([^}]*{[^}]*while\s*\([^}]*{)/;
+                    if (nestedLoopPattern.test(line)) {
+                        timeComplexityPenalty += 20;
+                        simulatedCpuCycles += 1000;
+                        complexLineNumbers.push(lineNum);
+                    }
+                });
+
+                // Recursive function detection (simple check for self-call)
+                lines.forEach((line, index) => {
+                    const lineNum = index + 1;
+                    const recursivePattern = /(function\s+(\w+)[^}]*\1\s*\(|def\s+(\w+)[^:]*:\s*[^}]*\1\s*\()/;
+                    if (recursivePattern.test(line)) {
+                        timeComplexityPenalty += 15;
+                        simulatedCpuCycles += 800;
+                        complexLineNumbers.push(lineNum);
+                    }
+                });
+
+                // Array/string operations in loops (e.g., indexOf, push, concat, splice)
+                lines.forEach((line, index) => {
+                    const lineNum = index + 1;
+                    const arrayOpsInLoops = /(for\s*\([^}]*{[^}]*\.(?:push|concat|splice|indexOf|slice)|while\s*\([^}]*{[^}]*\.(?:push|concat|splice|indexOf|slice))/;
+                    if (arrayOpsInLoops.test(line)) {
+                        timeComplexityPenalty += 10;
+                        simulatedCpuCycles += 500;
+                        simulatedMemoryAccesses += 200;
+                        complexLineNumbers.push(lineNum);
+                    }
+                });
+
+                // Memory allocation patterns (new, malloc, calloc, array/object literals in loops)
+                lines.forEach((line, index) => {
+                    const lineNum = index + 1;
+                    const memoryAllocation = /(new\s+\w+|malloc|calloc|\[\]|\{\})/;
+                    if (memoryAllocation.test(line)) {
+                        spaceComplexityPenalty += 5;
+                        simulatedMemoryAccesses += 100;
+                        complexLineNumbers.push(lineNum);
+                    }
+                });
+
+                // Function length / parameter count (simple heuristic for complexity)
+                let currentFunctionLines = 0;
+                let currentFunctionParams = 0;
+                let inFunction = false;
+                lines.forEach((line, index) => {
+                    const lineNum = index + 1;
+                    if (/(function|def)\s+\w+\s*\(/.test(line)) {
+                        inFunction = true;
+                        currentFunctionLines = 0;
+                        currentFunctionParams = (line.match(/(\w+,?\s*)/g) || []).length - 1; // Basic param count
+                    }
+                    if (inFunction) {
+                        currentFunctionLines++;
+                        if (currentFunctionLines > 30 || currentFunctionParams > 5) {
+                            if (!complexLineNumbers.includes(lineNum)) { // Avoid duplicates
+                                complexLineNumbers.push(lineNum);
+                            }
+                            timeComplexityPenalty += 5; // Small penalty for long functions
+                        }
+                        // Simple way to detect end of function block (might need refinement for complex cases)
+                        if (language === 'javascript' && line.includes('}') && currentFunctionLines > 1) {
+                            inFunction = false;
+                        } else if (language === 'python' && !line.trim() && currentFunctionLines > 1) {
+                            inFunction = false;
+                        }
+                    }
+                });
+
+
+                // Determine rating
+                const totalPenalty = timeComplexityPenalty + spaceComplexityPenalty;
+                if (totalPenalty > 40) rating = 'Poor';
+                else if (totalPenalty > 20) rating = 'Average';
+                else if (totalPenalty > 10) rating = 'Good';
+                else rating = 'Excellent';
+
+                return {
+                    timeComplexityPenalty,
+                    spaceComplexityPenalty,
+                    simulatedCpuCycles,
+                    simulatedMemoryAccesses,
+                    rating,
+                    complexLineNumbers: [...new Set(complexLineNumbers)].sort((a,b) => a-b) // Ensure unique and sorted
+                };
+            }
+
+            analyzePatterns(code, language, lines) {
+                let inefficiencyPenalty = 0;
+                let simulatedIoOperations = 0;
+                const patterns = [];
+                const dataStructureInefficiencies = [];
+                const linterFindings = []; // New array for linter-like findings
+
+                // Inefficient string concatenation
+                if (code.includes('+=') && code.includes('for')) {
+                    inefficiencyPenalty += 15;
+                    patterns.push('String concatenation in loops');
+                }
+
+                // Repeated DOM queries (JavaScript)
+                const domQueries = code.match(/document\.(?:getElementById|querySelector)/g);
+                if (language === 'javascript' && domQueries && domQueries.length > 3) {
+                    inefficiencyPenalty += 10;
+                    patterns.push('Repeated DOM queries');
+                }
+
+                // Inefficient array operations / Linear search in loops (JS/Python)
+                if ((language === 'javascript' && code.includes('.indexOf(') && code.includes('for')) ||
+                    (language === 'python' && code.includes(' in ') && code.includes('for') && !code.includes('set(') && !code.includes('{'))) {
+                    inefficiencyPenalty += 12;
+                    patterns.push('Linear search in loops');
+                    dataStructureInefficiencies.push({
+                        type: 'Lookup Efficiency',
+                        description: 'Using linear search (e.g., `indexOf` on arrays/lists) within loops can be inefficient. Consider `Set` or `Map`/`dict` for O(1) average time lookups.'
+                    });
+                }
+
+                // Excessive object/array creation in loops
+                const objectCreationInLoop = /for\s*\([^}]*{[^}]*(?:new\s+\w+\(|\{\}|\[\])/g;
+                if (objectCreationInLoop.test(code)) {
+                    inefficiencyPenalty += 8;
+                    patterns.push('Object/Array creation in loops');
+                    dataStructureInefficiencies.push({
+                        type: 'Memory Allocation',
+                        description: 'Creating new objects or arrays inside loops can lead to high memory churn. Pre-allocate or reuse objects where possible.'
+                    });
+                }
+
+                // Missing error handling
+                if (!code.includes('try') && !code.includes('catch') && code.length > 500) {
+                    inefficiencyPenalty += 5;
+                    patterns.push('Missing error handling');
+                }
+
+                // Synchronous operations that could be async (Simulated I/O)
+                if (language === 'javascript' && (code.includes('XMLHttpRequest') || code.includes('fetch(')) && !code.includes('async')) {
+                    inefficiencyPenalty += 20;
+                    patterns.push('Synchronous HTTP requests');
+                    simulatedIoOperations += 5;
+                }
+                // Basic file I/O detection for other languages (simulated)
+                if (['python', 'java', 'cpp', 'c', 'go', 'rust'].includes(language)) {
+                    const fileIoPattern = /(open\(|read\(|write\(|FileInputStream|FileOutputStream|fstream|File::open)/g;
+                    const fileIoCount = (code.match(fileIoPattern) || []).length;
+                    if (fileIoCount > 0) {
+                        simulatedIoOperations += fileIoCount * 2;
+                    }
+                }
+
+                // --- Simulated Linter Checks ---
+                // Unused variable detection (very basic, just checks declaration vs. simple usage)
+                lines.forEach((line, index) => {
+                    const lineNum = index + 1;
+                    let varMatch;
+                    if (language === 'javascript') {
+                        varMatch = line.match(/(?:var|let|const)\s+(\w+)\s*=/);
+                    } else if (language === 'python') {
+                        varMatch = line.match(/(\w+)\s*=\s*[^=]/); // Simple assignment
+                        if (line.trim().startsWith('def ') || line.trim().startsWith('class ')) varMatch = null; // Exclude function/class definitions
+                    }
+                    
+                    if (varMatch) {
+                        const varName = varMatch[1];
+                        // Check if varName is used anywhere else in the code
+                        const usageCount = (code.match(new RegExp(`\\b${varName}\\b`, 'g')) || []).length;
+                        if (usageCount === 1) { // Only declared, not used
+                            linterFindings.push({
+                                type: 'Unused Variable',
+                                description: `Variable '${varName}' declared but appears to be unused. (Line ${lineNum})`,
+                                severity: 'warning',
+                                line: lineNum
+                            });
+                        }
+                    }
+                });
+
+                // Long lines (over 100 characters)
+                lines.forEach((line, index) => {
+                    const lineNum = index + 1;
+                    if (line.length > 100) {
+                        linterFindings.push({
+                            type: 'Code Style',
+                            description: `Line ${lineNum} is too long (${line.length} characters). Consider refactoring for readability.`,
+                            severity: 'warning',
+                            line: lineNum
+                        });
+                    }
+                });
+
+                // Function with too many parameters (simple heuristic)
+                lines.forEach((line, index) => {
+                    const lineNum = index + 1;
+                    let paramMatch;
+                    if (language === 'javascript') {
+                        paramMatch = line.match(/(function\s+\w+\s*\(([^)]*)\))/);
+                    } else if (language === 'python') {
+                        paramMatch = line.match(/(def\s+\w+\s*\(([^)]*)\))/);
+                    }
+                    if (paramMatch && paramMatch[2]) {
+                        const params = paramMatch[2].split(',').filter(p => p.trim() !== '').length;
+                        if (params > 5) { // Heuristic: more than 5 parameters
+                            linterFindings.push({
+                                type: 'Code Smell',
+                                description: `Function at line ${lineNum} has too many parameters (${params}). Consider refactoring using an object/struct.`,
+                                severity: 'warning',
+                                line: lineNum
+                            });
+                        }
+                    }
+                });
+
+                // Inconsistent indentation (very basic: checks if first line of block has different indentation than previous)
+                if (lines.length > 1) {
+                    let prevIndent = 0;
+                    for (let i = 1; i < lines.length; i++) {
+                        const currentLine = lines[i];
+                        const prevLine = lines[i-1];
+                        if (currentLine.trim() === '') continue; // Skip empty lines
+
+                        const currentIndent = currentLine.match(/^\s*/)[0].length;
+                        const prevLineHasBlockStart = /(?:{|:|do|then)\s*$/.test(prevLine.trim()); // JS/Python/Java block starts
+
+                        if (prevLineHasBlockStart && currentIndent <= prevIndent) {
+                             linterFindings.push({
+                                type: 'Code Style',
+                                description: `Inconsistent indentation detected around line ${i + 1}. Expected more indentation after a block start.`,
+                                severity: 'warning',
+                                line: i + 1
+                            });
+                        } else if (!prevLineHasBlockStart && currentIndent > prevIndent + 4) { // Heuristic for excessive indent
+                             linterFindings.push({
+                                type: 'Code Style',
+                                description: `Excessive indentation detected around line ${i + 1}. Review indentation consistency.`,
+                                severity: 'warning',
+                                line: i + 1
+                            });
+                        }
+                        prevIndent = currentIndent;
+                    }
+                }
+
+
+                return {
+                    inefficiencyPenalty,
+                    simulatedIoOperations,
+                    patterns,
+                    dataStructureInefficiencies,
+                    linterFindings // Include linter findings
+                };
+            }
+
+            analyzeConcurrency(code, language) {
+                let concurrencyDetected = false;
+                let concurrencyPenalty = 0;
+                const concurrencyInsights = [];
+
+                if (language === 'java') {
+                    if (code.includes('synchronized') || code.includes('Thread') || code.includes('ExecutorService')) {
+                        concurrencyDetected = true;
+                        concurrencyInsights.push({
+                            type: 'Java Concurrency',
+                            description: 'Concurrency constructs (`synchronized`, `Thread`, `ExecutorService`) detected. Ensure proper synchronization to avoid race conditions and deadlocks. Consider `java.util.concurrent` utilities for robust solutions.'
+                        });
+                        concurrencyPenalty += 10;
+                    }
+                } else if (language === 'cpp') {
+                    if (code.includes('std::thread') || code.includes('std::mutex') || code.includes('std::async')) {
+                        concurrencyDetected = true;
+                        concurrencyInsights.push({
+                            type: 'C++ Concurrency',
+                            description: 'C++ concurrency (`std::thread`, `std::mutex`, `std::async`) detected. Pay close attention to data races, mutex locking, and thread management. Use RAII for mutexes (`std::lock_guard`, `std::unique_lock`).'
+                        });
+                        concurrencyPenalty += 10;
+                    }
+                } else if (language === 'go') {
+                    if (code.includes('go ') || code.includes('chan ')) {
+                        concurrencyDetected = true;
+                        concurrencyInsights.push({
+                            type: 'Go Concurrency (Goroutines & Channels)',
+                            description: 'Goroutines and channels detected. Go\'s concurrency model is powerful, but ensure proper channel synchronization and avoid goroutine leaks. "Do not communicate by sharing memory; instead, share memory by communicating."'
+                        });
+                        concurrencyPenalty += 8;
+                    }
+                } else if (language === 'rust') {
+                    if (code.includes('thread::spawn') || code.includes('Arc<') || code.includes('Mutex<')) {
+                        concurrencyDetected = true;
+                        concurrencyInsights.push({
+                            type: 'Rust Concurrency (Ownership & Borrowing)',
+                            description: 'Rust concurrency (`thread::spawn`, `Arc`, `Mutex`) detected. Rust\'s ownership and borrowing rules prevent many concurrency bugs at compile time, but ensure correct usage of shared state (`Arc`, `Mutex`, `RwLock`).'
+                        });
+                        concurrencyPenalty += 8;
+                    }
+                }
+
+                return {
+                    concurrencyDetected,
+                    concurrencyPenalty,
+                    concurrencyInsights
+                };
+            }
+
+            getLanguageEnergyFactor(language) {
+                const factors = {
+                    'javascript': 2.1,
+                    'python': 1.8,
+                    'java': 1.5,
+                    'cpp': 1.0,
+                    'c': 0.9,
+                    'go': 1.2,
+                    'rust': 1.0
+                };
+                return factors[language] || 1.5;
+            }
+
+            generateSuggestions(code, language, patterns, complexity, concurrency) {
+                const suggestions = [];
+
+                if (patterns.patterns.includes('String concatenation in loops')) {
+                    suggestions.push({
+                        title: 'Optimize String Concatenation',
+                        description: 'Using `+=` for string concatenation in loops can be inefficient due to immutable strings. Use `Array.join()` (JS) or `StringBuilder` (Java) for better performance.',
+                        example: language === 'javascript' ? 
+                            'const parts = []; for(let i = 0; i < items.length; i++) { parts.push(items[i]); } return parts.join("");' :
+                            '// Java example:\nStringBuilder sb = new StringBuilder();\nfor(String item : items) {\n  sb.append(item);\n}\nreturn sb.toString();'
+                    });
+                }
+
+                if (patterns.patterns.includes('Repeated DOM queries')) {
+                    suggestions.push({
+                        title: 'Cache DOM Elements',
+                        description: 'Store frequently accessed DOM elements in variables to avoid repeated, costly queries to the DOM tree.',
+                        example: 'const myElement = document.getElementById("myElement");\n// Use myElement multiple times instead of re-querying'
+                    });
+                }
+
+                if (patterns.patterns.includes('Linear search in loops')) {
+                    suggestions.push({
+                        title: 'Use Hash-based Data Structures for Lookups',
+                        description: 'If you frequently check for element existence or retrieve values by key, replace linear searches (e.g., `indexOf` on arrays/lists) with hash-based data structures like `Set` or `Map`/`dict` for average O(1) lookup time.',
+                        example: language === 'javascript' ? 
+                            'const lookupSet = new Set(items);\nif (lookupSet.has(searchItem)) { /* ... */ }' :
+                            '# Python example:\nlookup_set = set(items)\nif search_item in lookup_set: # O(1) average\n    pass'
+                    });
+                }
+
+                if (patterns.patterns.includes('Object/Array creation in loops')) {
+                    suggestions.push({
+                        title: 'Minimize Object/Array Creation in Loops',
+                        description: 'Repeatedly creating new objects or arrays inside a loop can lead to high memory consumption and garbage collection overhead. Consider pre-allocating or reusing objects.',
+                        example: '// Instead of:\n// for (...) { const newObj = {}; /* ... */ }\n// Consider:\n// const obj = {}; for (...) { /* modify obj */ }'
+                    });
+                }
+
+                if (complexity.rating === 'Poor') {
+                    suggestions.push({
+                        title: 'Reduce Algorithm Complexity',
+                        description: 'Your code exhibits high time or space complexity. Consider using more efficient algorithms or data structures (e.g., hash maps, binary search trees) to reduce complexity from O(N^2) to O(N log N) or O(N).',
+                        example: 'Replace nested loops with hash maps for lookups, use binary search on sorted data, or implement memoization for recursive functions with overlapping subproblems.'
+                    });
+                }
+
+                if (patterns.patterns.includes('Missing error handling')) {
+                    suggestions.push({
+                        title: 'Add Robust Error Handling',
+                        description: 'Implement proper error handling (e.g., `try-catch` blocks) to make your code more robust, prevent crashes, and provide better user feedback.',
+                        example: 'try {\n  // Potentially error-prone code\n} catch (error) {\n  console.error("An error occurred:", error);\n  // Handle the error gracefully\n}'
+                    });
+                }
+
+                if (patterns.patterns.includes('Synchronous HTTP requests')) {
+                    suggestions.push({
+                        title: 'Use Asynchronous Operations for I/O',
+                        description: 'Synchronous I/O operations (like `XMLHttpRequest` without `async` in JS) block the main thread, leading to unresponsive applications. Use `async/await` or Promises for non-blocking operations.',
+                        example: 'async function fetchData(url) {\n  try {\n    const response = await fetch(url);\n    return await response.json();\n  } catch (error) {\n    console.error("Failed to fetch data:", error);\n  }\n}'
+                    });
+                }
+
+                if (concurrency.concurrencyDetected) {
+                    concurrency.concurrencyInsights.forEach(insight => {
+                        suggestions.push({
+                            title: `Concurrency Best Practices (${insight.type})`,
+                            description: insight.description,
+                            example: 'Review shared state access, use appropriate synchronization primitives (mutexes, semaphores, channels), and consider thread pooling for managing resources.'
+                        });
+                    });
+                }
+
+                // Add linter-based suggestions
+                patterns.linterFindings.forEach(finding => {
+                    suggestions.push({
+                        title: `Code Quality: ${finding.type}`,
+                        description: `${finding.description}`,
+                        example: `Review line ${finding.line} and apply best practices.`
+                    });
+                });
+
+                return suggestions;
+            }
+
+            identifyOptimizations(code, language) {
+                const optimizations = [];
+
+                if (language === 'javascript') {
+                    optimizations.push('Variable hoisting optimization');
+                    optimizations.push('Event delegation implementation');
+                    optimizations.push('Debouncing for frequent events');
+                }
+
+                if (language === 'python') {
+                    optimizations.push('List comprehension usage');
+                    optimizations.push('Generator expressions for memory efficiency');
+                    optimizations.push('Built-in function utilization');
+                }
+
+                return optimizations;
+            }
+
+            calculateComparisonMetrics() {
+                const originalEfficiency = this.analysisResults.originalEfficiency;
+                const improvement = Math.random() * 30 + 10;
+                const optimizedEfficiency = Math.min(95, originalEfficiency + improvement);
+
+                const originalCpuCycles = this.analysisResults.complexity.simulatedCpuCycles;
+                const originalMemoryAccesses = this.analysisResults.complexity.simulatedMemoryAccesses + this.analysisResults.patterns.simulatedMemoryAccesses;
+                const originalIoOperations = this.analysisResults.patterns.simulatedIoOperations;
+
+                const optimizedCpuCycles = originalCpuCycles * (1 - improvement / 200);
+                const optimizedMemoryAccesses = originalMemoryAccesses * (1 - improvement / 180);
+                const optimizedIoOperations = originalIoOperations * (1 - improvement / 150);
+
+                const optimizedEnergy = 
+                    (optimizedCpuCycles * 0.001) +
+                    (optimizedMemoryAccesses * 0.0005) +
+                    (optimizedIoOperations * 0.05);
+
+                const originalTime = (originalCpuCycles * 0.01 + originalMemoryAccesses * 0.005 + originalIoOperations * 10);
+                const optimizedTime = (optimizedCpuCycles * 0.01 + optimizedMemoryAccesses * 0.005 + optimizedIoOperations * 10);
+
+                const originalMemory = (originalMemoryAccesses * 0.01 + (this.originalCode.length / 1000));
+                const optimizedMemory = (optimizedMemoryAccesses * 0.01 + (this.optimizedCode.length / 1000));
+
+                const originalCarbon = parseFloat(this.analysisResults.originalEnergyConsumption) * 0.233;
+                const optimizedCarbon = optimizedEnergy * 0.233;
+
+                this.comparisonMetrics = {
+                    originalEfficiency,
+                    optimizedEfficiency,
+                    improvement,
+                    originalTime: originalTime.toFixed(1),
+                    optimizedTime: optimizedTime.toFixed(1),
+                    originalMemory: originalMemory.toFixed(1),
+                    optimizedMemory: optimizedMemory.toFixed(1),
+                    originalEnergy: parseFloat(this.analysisResults.originalEnergyConsumption).toFixed(2),
+                    optimizedEnergy: optimizedEnergy.toFixed(2),
+                    originalCarbon: originalCarbon.toFixed(3),
+                    optimizedCarbon: optimizedCarbon.toFixed(3)
+                };
+            }
+
+            // New function for basic syntax highlighting
+            applySyntaxHighlighting(codeString, language) {
+                let highlightedCode = codeString;
+
+                // Basic keywords (can be expanded per language)
+                const keywordsJS = ['function', 'var', 'let', 'const', 'if', 'else', 'for', 'while', 'return', 'new', 'this', 'true', 'false', 'null', 'undefined', 'async', 'await', 'try', 'catch'];
+                const keywordsPython = ['def', 'class', 'if', 'else', 'for', 'while', 'return', 'import', 'from', 'as', 'True', 'False', 'None', 'and', 'or', 'not', 'in', 'is'];
+                const keywordsJava = ['public', 'private', 'protected', 'class', 'static', 'void', 'int', 'String', 'for', 'while', 'if', 'else', 'return', 'new', 'this', 'true', 'false', 'null', 'try', 'catch', 'finally', 'import'];
+                const keywordsCPP = ['int', 'void', 'class', 'struct', 'for', 'while', 'if', 'else', 'return', 'new', 'this', 'true', 'false', 'nullptr', 'try', 'catch', 'public', 'private', 'protected', 'std'];
+
+                let currentKeywords = [];
+                if (language === 'javascript') currentKeywords = keywordsJS;
+                else if (language === 'python') currentKeywords = keywordsPython;
+                else if (language === 'java') currentKeywords = keywordsJava;
+                else if (language === 'cpp') currentKeywords = keywordsCPP;
+                // Add more languages as needed
+
+                // Apply keyword highlighting
+                currentKeywords.forEach(keyword => {
+                    const regex = new RegExp(`\\b(${keyword})\\b`, 'g');
+                    highlightedCode = highlightedCode.replace(regex, `<span class="keyword">$1</span>`);
+                });
+
+                // Strings
+                highlightedCode = highlightedCode.replace(/(".*?"|'.*?')/g, `<span class="string">$1</span>`);
+
+                // Comments
+                if (language === 'javascript' || language === 'java' || language === 'cpp') {
+                    highlightedCode = highlightedCode.replace(/(\/\/.*)/g, `<span class="comment">$1</span>`);
+                    highlightedCode = highlightedCode.replace(/(\/\*[\s\S]*?\*\/)/g, `<span class="comment">$1</span>`);
+                } else if (language === 'python') {
+                    highlightedCode = highlightedCode.replace(/(#.*)/g, `<span class="comment">$1</span>`);
+                }
+
+                // Numbers
+                highlightedCode = highlightedCode.replace(/\b(\d+(\.\d+)?)\b/g, `<span class="number">$1</span>`);
+
+                // Operators (basic set)
+                highlightedCode = highlightedCode.replace(/(\+\+|--|===|==|!=|!==|\+=|-=|\*=|%=|\/=|&&|\|\||!|\?|:|=|<|>|<=|>=|\+|-|\*|\/|%)/g, `<span class="operator">$1</span>`);
+
+                // Very basic function call/variable highlighting (can be improved with more complex regex or parsing)
+                // This is a simple heuristic and might not be perfectly accurate
+                highlightedCode = highlightedCode.replace(/(\b[a-zA-Z_]\w*\s*\()/g, `<span class="function-call">$1</span>`);
+                highlightedCode = highlightedCode.replace(/(\b[a-zA-Z_]\w*\b)(?![^<]*>|["']|\.)/g, `<span class="variable">$1</span>`); // Avoid highlighting keywords and strings again
+
+
+                return highlightedCode;
+            }
+
+            displayResults() {
+                const metrics = this.comparisonMetrics;
+                
+                document.getElementById('originalEfficiencyScore').textContent = `${metrics.originalEfficiency}/100`;
+                document.getElementById('optimizedEfficiencyScore').textContent = `${Math.round(metrics.optimizedEfficiency)}/100`;
+                document.getElementById('overallImprovement').textContent = `+${metrics.improvement.toFixed(1)}%`;
+                
+                const qualityRating = metrics.improvement > 25 ? 'Excellent' : 
+                                     metrics.improvement > 15 ? 'Good' : 
+                                     metrics.improvement > 10 ? 'Average' : 'Minimal';
+                document.getElementById('optimizationQuality').textContent = qualityRating;
+
+                // Display suggestions
+                const suggestionsContainer = document.getElementById('suggestions');
+                suggestionsContainer.innerHTML = '';
+                
+                this.analysisResults.suggestions.forEach(suggestion => {
+                    const suggestionDiv = document.createElement('div');
+                    suggestionDiv.className = 'suggestion-item';
+                    suggestionDiv.innerHTML = `
+                        <div class="suggestion-title">${suggestion.title}</div>
+                        <div class="suggestion-description">${suggestion.description}</div>
+                        <div class="code-example"><pre>${suggestion.example}</pre></div>
+                    `;
+                    suggestionsContainer.appendChild(suggestionDiv);
+                });
+                this.vizManager.createAllVisualizations(this.comparisonMetrics);
+
+                this.results.classList.add('show');
+            }
+
+            displayCodeComparison() {
+                const language = this.languageSelect.value;
+
+                // Apply syntax highlighting to original code
+                const highlightedOriginalCode = this.applySyntaxHighlighting(this.originalCode, language);
+                document.getElementById('originalCode').innerHTML = this.applyComplexityHighlighting(highlightedOriginalCode, this.complexLines);
+
+                // Apply syntax highlighting to optimized code
+                const highlightedOptimizedCode = this.applySyntaxHighlighting(this.optimizedCode, language);
+                document.getElementById('optimizedCode').innerHTML = this.applyComplexityHighlighting(highlightedOptimizedCode, this.complexLines); // Can also highlight complex lines in optimized if they persist
+
+                // Display optimization explanations
+                const explanationsContainer = document.getElementById('optimizationExplanations');
+                explanationsContainer.innerHTML = '';
+
+                if (this.optimizationDetails && this.optimizationDetails.length > 0) {
+                    this.optimizationDetails.forEach(opt => {
+                        const explanationDiv = document.createElement('div');
+                        explanationDiv.className = 'optimization-explanation';
+                        explanationDiv.innerHTML = `
+                            <div class="optimization-title">${opt.type}</div>
+                            <div class="optimization-description">${opt.description}</div>
+                        `;
+                        explanationsContainer.appendChild(explanationDiv);
+                    });
+                }
+            }
+
+            // New function to apply complexity highlighting
+            applyComplexityHighlighting(codeHtml, complexLineNumbers) {
+                const lines = codeHtml.split('\n');
+                let highlightedLines = lines.map((line, index) => {
+                    if (complexLineNumbers.includes(index + 1)) {
+                        return `<span class="highlight-complexity">${line}</span>`;
+                    }
+                    return line;
+                });
+                return highlightedLines.join('\n');
+            }
+
+
+            displayPerformanceComparison() {
+                const metrics = this.comparisonMetrics;
+
+                document.getElementById('originalTime').textContent = `${metrics.originalTime}ms`;
+                document.getElementById('optimizedTime').textContent = `${metrics.optimizedTime}ms`;
+                document.getElementById('originalMemory').textContent = `${metrics.originalMemory}MB`;
+                document.getElementById('optimizedMemory').textContent = `${metrics.optimizedMemory}MB`;
+                document.getElementById('originalEnergy').textContent = `${metrics.originalEnergy}J`;
+                document.getElementById('optimizedEnergy').textContent = `${metrics.optimizedEnergy}J`;
+                document.getElementById('originalCarbon').textContent = `${metrics.originalCarbon}kg`;
+                document.getElementById('optimizedCarbon').textContent = `${metrics.optimizedCarbon}kg`;
+
+                const timeImprovement = ((metrics.originalTime - metrics.optimizedTime) / metrics.originalTime * 100).toFixed(1);
+                const memoryImprovement = ((metrics.originalMemory - metrics.optimizedMemory) / metrics.originalMemory * 100).toFixed(1);
+                const energyImprovement = ((metrics.originalEnergy - metrics.optimizedEnergy) / metrics.originalEnergy * 100).toFixed(1);
+                const carbonImprovement = ((metrics.originalCarbon - metrics.optimizedCarbon) / metrics.originalCarbon * 100).toFixed(1);
+
+                document.getElementById('timeImprovement').textContent = `${timeImprovement}% faster`;
+                document.getElementById('memoryImprovement').textContent = `${memoryImprovement}% less memory`;
+                document.getElementById('energyImprovement').textContent = `${energyImprovement}% less energy`;
+                document.getElementById('carbonImprovement').textContent = `${carbonImprovement}% less CO2`;
+
+                const updateBadgeColor = (elementId, improvement) => {
+                    const element = document.getElementById(elementId);
+                    if (parseFloat(improvement) > 0) {
+                        element.className = 'improvement-badge';
+                    } else {
+                        element.className = 'degradation-badge';
+                    }
+                };
+
+                updateBadgeColor('timeImprovement', timeImprovement);
+                updateBadgeColor('memoryImprovement', memoryImprovement);
+                updateBadgeColor('energyImprovement', energyImprovement);
+                updateBadgeColor('carbonImprovement', carbonImprovement);
+            }
+
+            displayAdvancedInsights() {
+                this.advancedInsightsContainer.innerHTML = '';
+
+                // Data Structure Efficiency Insights
+                if (this.analysisResults.patterns.dataStructureInefficiencies.length > 0) {
+                    this.analysisResults.patterns.dataStructureInefficiencies.forEach(insight => {
+                        const insightDiv = document.createElement('div');
+                        insightDiv.className = 'insight-item';
+                        insightDiv.innerHTML = `
+                            <div class="insight-title">📊 Data Structure Efficiency: ${insight.type}</div>
+                            <div class="insight-description">${insight.description}</div>
+                        `;
+                        this.advancedInsightsContainer.appendChild(insightDiv);
+                    });
+                } else {
+                    const insightDiv = document.createElement('div');
+                    insightDiv.className = 'insight-item';
+                    insightDiv.innerHTML = `
+                        <div class="insight-title">📊 Data Structure Efficiency</div>
+                        <div class="insight-description">No significant data structure inefficiencies detected. Good job!</div>
+                    `;
+                    this.advancedInsightsContainer.appendChild(insightDiv);
+                }
+
+                // Concurrency/Parallelism Insights
+                if (this.analysisResults.concurrency.concurrencyDetected) {
+                    this.analysisResults.concurrency.concurrencyInsights.forEach(insight => {
+                        const insightDiv = document.createElement('div');
+                        insightDiv.className = 'insight-item';
+                        insightDiv.innerHTML = `
+                            <div class="insight-title">⚡ Concurrency/Parallelism: ${insight.type}</div>
+                            <div class="insight-description">${insight.description}</div>
+                        `;
+                        this.advancedInsightsContainer.appendChild(insightDiv);
+                    });
+                } else {
+                    const insightDiv = document.createElement('div');
+                    insightDiv.className = 'insight-item';
+                    insightDiv.innerHTML = `
+                        <div class="insight-title">⚡ Concurrency/Parallelism</div>
+                        <div class="insight-description">No explicit concurrency constructs detected in your code for this language.</div>
+                    `;
+                    this.advancedInsightsContainer.appendChild(insightDiv);
+                }
+
+                // Simulated Hardware Impact Insights
+                const hardwareInsightDiv = document.createElement('div');
+                hardwareInsightDiv.className = 'insight-item';
+                hardwareInsightDiv.innerHTML = `
+                    <div class="insight-title">🖥️ Simulated Hardware Impact (Original)</div>
+                    <div class="insight-description">
+                        Based on code patterns, the original code is estimated to involve:<br>
+                        - Simulated CPU Cycles: <strong>${this.analysisResults.complexity.simulatedCpuCycles.toFixed(0)}</strong><br>
+                        - Simulated Memory Accesses: <strong>${(this.analysisResults.complexity.simulatedMemoryAccesses + this.analysisResults.patterns.simulatedMemoryAccesses).toFixed(0)}</strong><br>
+                        - Simulated I/O Operations: <strong>${this.analysisResults.patterns.simulatedIoOperations.toFixed(0)}</strong><br>
+                        <em>Note: These are simulated estimates based on code structure, not actual hardware measurements.</em>
+                    </div>
+                `;
+                this.advancedInsightsContainer.appendChild(hardwareInsightDiv);
+
+                // Cyclomatic Complexity Hotspots
+                if (this.complexLines.length > 0) {
+                    const complexityInsightDiv = document.createElement('div');
+                    complexityInsightDiv.className = 'insight-item';
+                    complexityInsightDiv.innerHTML = `
+                        <div class="insight-title">📈 Cyclomatic Complexity Hotspots</div>
+                        <div class="insight-description">
+                            The following lines/blocks contribute significantly to code complexity: 
+                            <strong>${this.complexLines.map(line => `Line ${line}`).join(', ')}</strong>. 
+                            Consider refactoring these sections for better readability and maintainability.
+                            <em>(Highlighted in orange in the code comparison view)</em>
+                        </div>
+                    `;
+                    this.advancedInsightsContainer.appendChild(complexityInsightDiv);
+                } else {
+                    const complexityInsightDiv = document.createElement('div');
+                    complexityInsightDiv.className = 'insight-item';
+                    complexityInsightDiv.innerHTML = `
+                        <div class="insight-title">📈 Cyclomatic Complexity</div>
+                        <div class="insight-description">No significant cyclomatic complexity hotspots detected.</div>
+                    `;
+                    this.advancedInsightsContainer.appendChild(complexityInsightDiv);
+                }
+
+                // Static Code Analysis Findings (Linter-like)
+                if (this.analysisResults.patterns.linterFindings.length > 0) {
+                    const linterInsightDiv = document.createElement('div');
+                    linterInsightDiv.className = 'insight-item';
+                    let findingsHtml = '<div class="insight-title">🔍 Static Code Analysis Findings</div><div class="insight-description">';
+                    this.analysisResults.patterns.linterFindings.forEach(finding => {
+                        findingsHtml += `<p><strong>${finding.type} (${finding.severity.toUpperCase()}):</strong> ${finding.description}</p>`;
+                    });
+                    findingsHtml += '</div>';
+                    linterInsightDiv.innerHTML = findingsHtml;
+                    this.advancedInsightsContainer.appendChild(linterInsightDiv);
+                } else {
+                    const linterInsightDiv = document.createElement('div');
+                    linterInsightDiv.className = 'insight-item';
+                    linterInsightDiv.innerHTML = `
+                        <div class="insight-title">🔍 Static Code Analysis</div>
+                        <div class="insight-description">No major static code analysis findings (linter-like issues) detected.</div>
+                    `;
+                    this.advancedInsightsContainer.appendChild(linterInsightDiv);
+                }
+            }
+
+
+            showLoading() {
+                this.loading.style.display = 'block';
+                this.analyzeBtn.disabled = true;
+                this.results.classList.remove('show');
+            }
+
+            hideLoading() {
+                this.loading.style.display = 'none';
+                this.analyzeBtn.disabled = false;
+            }
+
+            showError(message) {
+                // Remove any existing error messages first
+                const existingError = this.results.querySelector('.error-message');
+                if (existingError) {
+                    existingError.remove();
+                }
+
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.textContent = message;
+                this.results.appendChild(errorDiv);
+                this.results.classList.add('show');
+            }
+        }
+
+        // Copy to clipboard functionality
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            // Use execCommand for broader compatibility within iframes
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                // Show success feedback
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.background = 'linear-gradient(45deg, #22c55e, #16a34a)';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = 'linear-gradient(45deg, #3b82f6, #2563eb)';
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers or if execCommand fails
+                alert('Failed to copy to clipboard. Please copy manually.');
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            new GreenAlgorithmOptimizerPro();
+        });
+    </script>
+</body>
+</html>
+
+
