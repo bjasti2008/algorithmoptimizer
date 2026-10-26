@@ -646,7 +646,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌱 Green Algorithm Optimizer Pro</h1>
+        <h1> Green Algorithm Optimizer Pro</h1>
         <p class="subtitle">Advanced code analysis with AI-powered optimization and energy efficiency comparison</p>
 
         <div class="tabs">
@@ -683,15 +683,15 @@
 
         <div class="tab-content" id="optimize">
             <div class="code-comparison">
-                <div class="comparison-header">🔄 Code Optimization Results</div>
+                <div class="comparison-header"> Code Optimization Results</div>
                 <div class="code-panels">
                     <div class="code-panel">
-                        <div class="code-panel-header original-header">📝 Original Code</div>
+                        <div class="code-panel-header original-header"> Original Code</div>
                         <div class="code-content" id="originalCode">No code analyzed yet...</div>
                         <button class="copy-btn" onclick="copyToClipboard('originalCode')">Copy Original</button>
                     </div>
                     <div class="code-panel">
-                        <div class="code-panel-header optimized-header">⚡ Optimized Code</div>
+                        <div class="code-panel-header optimized-header"> Optimized Code</div>
                         <div class="code-content" id="optimizedCode">Run analysis first...</div>
                         <button class="copy-btn" onclick="copyToClipboard('optimizedCode')">Copy Optimized</button>
                     </div>
@@ -702,7 +702,7 @@
 
         <div class="tab-content" id="compare">
             <div class="performance-comparison">
-                <div class="comparison-header">📊 Performance Metrics Comparison</div>
+                <div class="comparison-header"> Performance Metrics Comparison</div>
                 <div class="performance-grid">
                     <div class="performance-metric">
                         <div class="performance-metric-title">Execution Time</div>
@@ -772,7 +772,7 @@
             </div>
 
                     <div class="visualization-section">
-        <div class="visualization-title">📊 Performance Visualizations</div>
+        <div class="visualization-title"> Performance Visualizations</div>
         
         <div class="charts-grid">
             <!-- Performance Metrics Bar Chart -->
@@ -855,7 +855,7 @@
                 </div>
             </div>
             <div class="suggestions-section">
-                <h3 style="color: #4ade80; margin-bottom: 20px; font-size: 1.5em;">💡 Additional Optimization Suggestions</h3>
+                <h3 style="color: #4ade80; margin-bottom: 20px; font-size: 1.5em;"> Additional Optimization Suggestions</h3>
                 <div id="suggestions"></div>
             </div>
         </div>
@@ -2194,7 +2194,7 @@
                         const insightDiv = document.createElement('div');
                         insightDiv.className = 'insight-item';
                         insightDiv.innerHTML = `
-                            <div class="insight-title">📊 Data Structure Efficiency: ${insight.type}</div>
+                            <div class="insight-title"> Data Structure Efficiency: ${insight.type}</div>
                             <div class="insight-description">${insight.description}</div>
                         `;
                         this.advancedInsightsContainer.appendChild(insightDiv);
@@ -2203,7 +2203,7 @@
                     const insightDiv = document.createElement('div');
                     insightDiv.className = 'insight-item';
                     insightDiv.innerHTML = `
-                        <div class="insight-title">📊 Data Structure Efficiency</div>
+                        <div class="insight-title"> Data Structure Efficiency</div>
                         <div class="insight-description">No significant data structure inefficiencies detected. Good job!</div>
                     `;
                     this.advancedInsightsContainer.appendChild(insightDiv);
@@ -2215,7 +2215,7 @@
                         const insightDiv = document.createElement('div');
                         insightDiv.className = 'insight-item';
                         insightDiv.innerHTML = `
-                            <div class="insight-title">⚡ Concurrency/Parallelism: ${insight.type}</div>
+                            <div class="insight-title"> Concurrency/Parallelism: ${insight.type}</div>
                             <div class="insight-description">${insight.description}</div>
                         `;
                         this.advancedInsightsContainer.appendChild(insightDiv);
@@ -2224,7 +2224,7 @@
                     const insightDiv = document.createElement('div');
                     insightDiv.className = 'insight-item';
                     insightDiv.innerHTML = `
-                        <div class="insight-title">⚡ Concurrency/Parallelism</div>
+                        <div class="insight-title"> Concurrency/Parallelism</div>
                         <div class="insight-description">No explicit concurrency constructs detected in your code for this language.</div>
                     `;
                     this.advancedInsightsContainer.appendChild(insightDiv);
@@ -2234,7 +2234,7 @@
                 const hardwareInsightDiv = document.createElement('div');
                 hardwareInsightDiv.className = 'insight-item';
                 hardwareInsightDiv.innerHTML = `
-                    <div class="insight-title">🖥️ Simulated Hardware Impact (Original)</div>
+                    <div class="insight-title"> Simulated Hardware Impact (Original)</div>
                     <div class="insight-description">
                         Based on code patterns, the original code is estimated to involve:<br>
                         - Simulated CPU Cycles: <strong>${this.analysisResults.complexity.simulatedCpuCycles.toFixed(0)}</strong><br>
@@ -2250,7 +2250,7 @@
                     const complexityInsightDiv = document.createElement('div');
                     complexityInsightDiv.className = 'insight-item';
                     complexityInsightDiv.innerHTML = `
-                        <div class="insight-title">📈 Cyclomatic Complexity Hotspots</div>
+                        <div class="insight-title"> Cyclomatic Complexity Hotspots</div>
                         <div class="insight-description">
                             The following lines/blocks contribute significantly to code complexity: 
                             <strong>${this.complexLines.map(line => `Line ${line}`).join(', ')}</strong>. 
@@ -2263,7 +2263,7 @@
                     const complexityInsightDiv = document.createElement('div');
                     complexityInsightDiv.className = 'insight-item';
                     complexityInsightDiv.innerHTML = `
-                        <div class="insight-title">📈 Cyclomatic Complexity</div>
+                        <div class="insight-title"> Cyclomatic Complexity</div>
                         <div class="insight-description">No significant cyclomatic complexity hotspots detected.</div>
                     `;
                     this.advancedInsightsContainer.appendChild(complexityInsightDiv);
@@ -2273,7 +2273,7 @@
                 if (this.analysisResults.patterns.linterFindings.length > 0) {
                     const linterInsightDiv = document.createElement('div');
                     linterInsightDiv.className = 'insight-item';
-                    let findingsHtml = '<div class="insight-title">🔍 Static Code Analysis Findings</div><div class="insight-description">';
+                    let findingsHtml = '<div class="insight-title"> Static Code Analysis Findings</div><div class="insight-description">';
                     this.analysisResults.patterns.linterFindings.forEach(finding => {
                         findingsHtml += `<p><strong>${finding.type} (${finding.severity.toUpperCase()}):</strong> ${finding.description}</p>`;
                     });
@@ -2284,7 +2284,7 @@
                     const linterInsightDiv = document.createElement('div');
                     linterInsightDiv.className = 'insight-item';
                     linterInsightDiv.innerHTML = `
-                        <div class="insight-title">🔍 Static Code Analysis</div>
+                        <div class="insight-title"> Static Code Analysis</div>
                         <div class="insight-description">No major static code analysis findings (linter-like issues) detected.</div>
                     `;
                     this.advancedInsightsContainer.appendChild(linterInsightDiv);
